@@ -1,0 +1,70 @@
+{
+  "total_prompts": 1500,
+  "class_distribution": {
+    "benign": 670,
+    "jailbreak": 455,
+    "harmful": 375
+  },
+  "jailbreak_attack_distribution": {
+    "role_play": 205,
+    "instruction_override": 124,
+    "multi_step": 84,
+    "prompt_injection": 41,
+    "obfuscation": 1
+  },
+  "source_distribution": {
+    "squad_v2_questions": 281,
+    "alpaca_instructions": 280,
+    "trustairlab_regular_benign": 102,
+    "jbb_behaviors_benign": 7,
+    "toxic_chat_jailbreak_variation": 49,
+    "trustairlab_in_the_wild_jailbreak": 328,
+    "toxic_chat_jailbreak": 47,
+    "trustairlab_in_the_wild_jailbreak_variation": 27,
+    "rubend18_chatgpt_jailbreak_prompts": 4,
+    "fallback_harmful": 15,
+    "jbb_behaviors_harmful": 100,
+    "toxic_chat_harmful": 260
+  },
+  "split_distribution": {
+    "train": 1045,
+    "test": 233,
+    "validation": 222
+  },
+  "split_class_distribution": {
+    "validation": {
+      "benign": 100,
+      "jailbreak": 66,
+      "harmful": 56
+    },
+    "train": {
+      "benign": 468,
+      "jailbreak": 315,
+      "harmful": 262
+    },
+    "test": {
+      "benign": 102,
+      "jailbreak": 74,
+      "harmful": 57
+    }
+  },
+  "structure_distribution": {
+    "question": 381,
+    "statement": 899,
+    "imperative": 220
+  },
+  "topic_distribution": {
+    "general": 1193,
+    "technology": 129,
+    "education": 112,
+    "health": 16,
+    "travel": 19,
+    "science": 13,
+    "security": 18
+  },
+  "length_stats": {
+    "min": 15,
+    "max": 2490,
+    "avg": 464.18
+  }
+}

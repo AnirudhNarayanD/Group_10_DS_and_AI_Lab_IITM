@@ -1,0 +1,8 @@
+Dataset Preparation Pipeline:
+1) Data collection from public online sources (+ fallback seeds if unavailable)
+2) Canonical labeling (benign / jailbreak / harmful) and attack taxonomy mapping
+3) Cleaning (normalization, invalid filtering, deduplication)
+4) Jailbreak variation generation for robustness evaluation
+5) Balance-aware sampling to target scale
+6) Grouped train/validation/test split to avoid leakage
+7) Export to CSV/JSON and statistics reporting

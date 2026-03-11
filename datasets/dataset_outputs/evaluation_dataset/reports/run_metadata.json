@@ -1,0 +1,193 @@
+{
+  "created_at_utc": "2026-03-11T15:48:50.418058+00:00",
+  "seed": 42,
+  "target_size": 1500,
+  "sources": [
+    {
+      "name": "squad_v2_questions",
+      "label": "benign",
+      "hf_dataset": "rajpurkar/squad_v2",
+      "hf_split": "train",
+      "hf_config": null,
+      "text_fields": [
+        "question"
+      ],
+      "attack_type": "none",
+      "max_rows": 3500,
+      "row_filters": {},
+      "streaming": false
+    },
+    {
+      "name": "alpaca_instructions",
+      "label": "benign",
+      "hf_dataset": "yahma/alpaca-cleaned",
+      "hf_split": "train",
+      "hf_config": null,
+      "text_fields": [
+        "instruction"
+      ],
+      "attack_type": "none",
+      "max_rows": 3500,
+      "row_filters": {},
+      "streaming": false
+    },
+    {
+      "name": "jbb_behaviors_harmful",
+      "label": "harmful",
+      "hf_dataset": "JailbreakBench/JBB-Behaviors",
+      "hf_split": "harmful",
+      "hf_config": "behaviors",
+      "text_fields": [
+        "Goal",
+        "Target",
+        "Behavior",
+        "goal",
+        "behavior",
+        "prompt",
+        "text"
+      ],
+      "attack_type": "none",
+      "max_rows": 300,
+      "row_filters": {},
+      "streaming": false
+    },
+    {
+      "name": "jbb_behaviors_benign",
+      "label": "benign",
+      "hf_dataset": "JailbreakBench/JBB-Behaviors",
+      "hf_split": "benign",
+      "hf_config": "behaviors",
+      "text_fields": [
+        "Goal",
+        "Target",
+        "Behavior",
+        "goal",
+        "behavior",
+        "prompt",
+        "text"
+      ],
+      "attack_type": "none",
+      "max_rows": 300,
+      "row_filters": {},
+      "streaming": false
+    },
+    {
+      "name": "toxic_chat_jailbreak",
+      "label": "jailbreak",
+      "hf_dataset": "lmsys/toxic-chat",
+      "hf_split": "train",
+      "hf_config": "toxicchat0124",
+      "text_fields": [
+        "user_input",
+        "text",
+        "prompt"
+      ],
+      "attack_type": "prompt_injection",
+      "max_rows": 5000,
+      "row_filters": {
+        "jailbreaking": "1"
+      },
+      "streaming": false
+    },
+    {
+      "name": "trustairlab_in_the_wild_jailbreak",
+      "label": "jailbreak",
+      "hf_dataset": "TrustAIRLab/in-the-wild-jailbreak-prompts",
+      "hf_split": "train",
+      "hf_config": "jailbreak_2023_12_25",
+      "text_fields": [
+        "prompt"
+      ],
+      "attack_type": "instruction_override",
+      "max_rows": 1200,
+      "row_filters": {},
+      "streaming": true
+    },
+    {
+      "name": "rubend18_chatgpt_jailbreak_prompts",
+      "label": "jailbreak",
+      "hf_dataset": "rubend18/ChatGPT-Jailbreak-Prompts",
+      "hf_split": "train",
+      "hf_config": null,
+      "text_fields": [
+        "Prompt"
+      ],
+      "attack_type": "role_play",
+      "max_rows": 300,
+      "row_filters": {},
+      "streaming": false
+    },
+    {
+      "name": "toxic_chat_harmful",
+      "label": "harmful",
+      "hf_dataset": "lmsys/toxic-chat",
+      "hf_split": "train",
+      "hf_config": "toxicchat0124",
+      "text_fields": [
+        "user_input",
+        "text",
+        "prompt"
+      ],
+      "attack_type": "none",
+      "max_rows": 5000,
+      "row_filters": {
+        "toxicity": "1"
+      },
+      "streaming": false
+    },
+    {
+      "name": "trustairlab_regular_benign",
+      "label": "benign",
+      "hf_dataset": "TrustAIRLab/in-the-wild-jailbreak-prompts",
+      "hf_split": "train",
+      "hf_config": "regular_2023_12_25",
+      "text_fields": [
+        "prompt"
+      ],
+      "attack_type": "none",
+      "max_rows": 1200,
+      "row_filters": {},
+      "streaming": true
+    }
+  ],
+  "source_type": "huggingface_datasets",
+  "fetch_report": {
+    "squad_v2_questions": "ok:3485",
+    "alpaca_instructions": "ok:3496",
+    "jbb_behaviors_harmful": "ok:100",
+    "jbb_behaviors_benign": "ok:100",
+    "toxic_chat_jailbreak": "ok:108",
+    "trustairlab_in_the_wild_jailbreak": "ok:784",
+    "rubend18_chatgpt_jailbreak_prompts": "ok:9",
+    "toxic_chat_harmful": "ok:260",
+    "trustairlab_regular_benign": "ok:1038",
+    "fallback_harmful": "generated:15"
+  },
+  "required_fields": [
+    "prompt_id",
+    "prompt_text",
+    "label",
+    "attack_type",
+    "data_source",
+    "expected_outcome",
+    "split"
+  ],
+  "labels": [
+    "benign",
+    "jailbreak",
+    "harmful"
+  ],
+  "jailbreak_taxonomy": [
+    "instruction_override",
+    "multi_step",
+    "obfuscation",
+    "other",
+    "prompt_injection",
+    "role_play"
+  ],
+  "expected_outcomes": {
+    "benign": "allow",
+    "jailbreak": "block",
+    "harmful": "block"
+  }
+}
