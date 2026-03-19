@@ -1,0 +1,242 @@
+\documentclass[11pt]{article}
+
+% ------------------------------------------------
+% Important packages
+% ------------------------------------------------
+\usepackage[margin=1in]{geometry}
+\usepackage{times}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage[nameinlink]{cleveref}
+\usepackage{setspace}
+\usepackage{caption}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+\hypersetup{
+colorlinks=true,
+linkcolor=blue,
+urlcolor=blue,
+citecolor=blue
+}
+
+\captionsetup{font=small}
+
+\begin{document}
+
+\title{\textbf{Milestone 2: Guardrail Dataset Construction and Analysis}}
+\date{}
+\maketitle
+
+\onehalfspacing
+
+% ------------------------------------------------
+% Dataset Construction
+% ------------------------------------------------
+
+\section{Dataset construction and characterization}
+
+To evaluate the effectiveness of the proposed guardrail framework under adversarial prompting conditions, we constructed a curated dataset consisting of benign prompts, jailbreak attacks, and harmful intent prompts. The dataset was assembled from multiple publicly available prompt repositories and adversarial prompt datasets using a unified pipeline in \texttt{data.py}.
+
+All prompts were standardized through a preprocessing pipeline involving normalization, duplicate removal, and validation checks to ensure data consistency. Each prompt was annotated with a semantic label indicating whether the prompt represents benign user intent, a jailbreak attempt designed to bypass safety restrictions, or a harmful request explicitly asking for disallowed content.
+
+In addition to the primary label, jailbreak prompts were further categorized according to their underlying attack strategy. This taxonomy allows fine-grained evaluation of guardrail robustness across multiple adversarial prompting techniques.
+
+The implemented preparation pipeline includes the following steps:
+\begin{enumerate}[leftmargin=*]
+\item Data collection from public online sources, with fallback generation if a source is unavailable.
+\item Canonical labeling (benign, jailbreak, harmful) and jailbreak taxonomy assignment.
+\item Cleaning via normalization, invalid filtering, and deduplication.
+\item Jailbreak variation generation for robustness testing.
+\item Balance-aware sampling to target dataset scale.
+\item Grouped train/validation/test splitting by family id to reduce leakage.
+\item Export to JSON/CSV with statistics and run metadata reports.
+\end{enumerate}
+
+% ------------------------------------------------
+% Dataset Composition
+% ------------------------------------------------
+
+\subsection{Dataset composition}
+
+The final dataset contains a total of 1,500 prompts spanning three primary classes. The dataset was intentionally constructed with a slightly larger proportion of adversarial prompts to enable robust evaluation of guardrail systems under challenging scenarios.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lc}
+\toprule
+Metric & Value \\
+\midrule
+Total prompts & 1500 \\
+Benign prompts & 670 \\
+Jailbreak prompts & 455 \\
+Harmful prompts & 375 \\
+Training split & 1045 \\
+Validation split & 222 \\
+Test split & 233 \\
+\bottomrule
+\end{tabular}
+\caption{Overall dataset composition and dataset splits used for guardrail training and evaluation.}
+\label{tab:dataset_summary}
+\end{table}
+
+The class distribution enables evaluation of both false-positive and false-negative guardrail behaviors. Benign prompts assess over-blocking, while jailbreak and harmful prompts enable systematic testing of safety violations.
+
+% ------------------------------------------------
+% Attack Taxonomy
+% ------------------------------------------------
+
+\subsection{Jailbreak attack taxonomy}
+
+Adversarial prompts were categorized according to their attack strategy to evaluate guardrail performance across different jailbreak mechanisms.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lc}
+\toprule
+Attack strategy & Count \\
+\midrule
+Role-play attack & 205 \\
+Instruction override & 124 \\
+Multi-step attack & 84 \\
+Prompt injection & 41 \\
+Obfuscation & 1 \\
+\bottomrule
+\end{tabular}
+\caption{Distribution of jailbreak attack strategies in the dataset.}
+\label{tab:attack_taxonomy}
+\end{table}
+
+Role-play attacks constitute the largest category. These attacks instruct the model to simulate fictional scenarios where safety restrictions are ignored. Instruction override attacks attempt to explicitly negate system instructions, while multi-step attacks embed malicious instructions within reasoning chains.
+
+The entropy of the jailbreak attack distribution is calculated as:
+
+\[
+H = 1.8116 \text{ bits}
+\]
+
+indicating moderate diversity in adversarial attack strategies.
+
+% ------------------------------------------------
+% Prompt Length
+% ------------------------------------------------
+
+\subsection{Prompt length characteristics}
+
+Prompt length statistics provide insight into structural differences between benign and adversarial prompts.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lc}
+\toprule
+Statistic & Value \\
+\midrule
+Minimum length & 15 \\
+Maximum length & 2490 \\
+Mean length & 464.18 \\
+Median length & 92.0 \\
+90th percentile & 1534.1 \\
+95th percentile & 1874.2 \\
+\bottomrule
+\end{tabular}
+\caption{Global prompt length statistics across the dataset.}
+\label{tab:length_global}
+\end{table}
+
+The dataset exhibits a long-tail distribution in prompt length. While benign prompts are typically short queries, adversarial prompts often contain extended contextual instructions intended to manipulate model behavior.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lcccc}
+\toprule
+Class & Count & Mean & Median & P90 \\
+\midrule
+Benign & 670 & 165.88 & 58.0 & 422.0 \\
+Jailbreak & 455 & 1127.17 & 1109 & 2075.8 \\
+Harmful & 375 & 192.71 & 89 & 544.6 \\
+\bottomrule
+\end{tabular}
+\caption{Prompt length statistics across dataset classes.}
+\label{tab:length_class}
+\end{table}
+
+Jailbreak prompts exhibit significantly longer average lengths compared with benign prompts. This pattern reflects the use of complex adversarial instructions designed to bypass guardrail filters.
+
+% ------------------------------------------------
+% Dataset Balance
+% ------------------------------------------------
+
+\subsection{Dataset balance and split integrity}
+
+Maintaining consistent class distributions across dataset splits is essential for reliable evaluation.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lccc}
+\toprule
+Split & Benign & Jailbreak & Harmful \\
+\midrule
+Train & 0.4478 & 0.3014 & 0.2507 \\
+Validation & 0.4505 & 0.2973 & 0.2523 \\
+Test & 0.4378 & 0.3176 & 0.2446 \\
+\bottomrule
+\end{tabular}
+\caption{Class proportions across dataset partitions.}
+\label{tab:split_ratios}
+\end{table}
+
+Distribution drift across splits remains low (maximum approximately $1.43\%$ on jailbreak class ratio in test split), indicating stable dataset construction and minimal sampling bias.
+
+% ------------------------------------------------
+% Data Sources
+% ------------------------------------------------
+
+\subsection{Source datasets}
+
+Prompts were collected from several public datasets covering different domains and adversarial behaviors.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lc}
+\toprule
+Source dataset & Count \\
+\midrule
+SQuAD v2 question dataset & 281 \\
+Alpaca instruction dataset & 280 \\
+TrustAIRLab benign prompts & 102 \\
+TrustAIRLab jailbreak dataset & 328 \\
+ToxicChat harmful prompts & 260 \\
+JBB harmful behaviors & 100 \\
+\bottomrule
+\end{tabular}
+\caption{Primary datasets used for prompt collection (largest contributors shown).}
+\label{tab:source_datasets}
+\end{table}
+
+Combining multiple prompt datasets improves topic diversity, linguistic variation, and adversarial coverage.
+
+% ------------------------------------------------
+% Key Observations
+% ------------------------------------------------
+
+\subsection{Key observations}
+
+Several insights emerge from the dataset analysis:
+
+\begin{itemize}
+\item The dataset includes a substantial proportion of adversarial prompts, enabling rigorous evaluation of jailbreak detection systems.
+\item Benign prompts remain well represented to assess false-positive guardrail behavior.
+\item Jailbreak prompts are significantly longer than benign prompts, reflecting complex adversarial instructions.
+\item Class proportions remain stable across dataset splits, ensuring reliable evaluation.
+\item Multiple jailbreak attack strategies are represented, enabling evaluation across diverse adversarial behaviors.
+\end{itemize}
+
+% ------------------------------------------------
+% Data Availability
+% ------------------------------------------------
+
+\subsection{Data availability}
+
+The processed dataset and accompanying metadata are stored in structured JSON and CSV formats. The dataset release includes the complete evaluation dataset, dataset splits, statistical summaries, pipeline steps, and run metadata describing dataset construction procedures. These artifacts are designed to support reproducible evaluation of guardrail systems.
+
+\end{document}

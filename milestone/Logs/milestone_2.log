@@ -1,0 +1,84 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.3.16)  16 MAR 2026 22:18
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**d:/DS_and_AI_Lab_Project/milestone_2.tex
+(d:/DS_and_AI_Lab_Project/milestone_2.tex
+LaTeX2e <2025-11-01>
+L3 programming layer <2025-12-24>
+
+(C:\Users\Anirudh Narayan\AppData\Local\Programs\MiKTeX\tex/latex/base\article.
+cls
+Document Class: article 2025/01/22 v1.4n Standard LaTeX document class
+
+(C:\Users\Anirudh Narayan\AppData\Local\Programs\MiKTeX\tex/latex/base\size11.c
+lo
+File: size11.clo 2025/01/22 v1.4n Standard LaTeX file (size option)
+)
+\c@part=\count275
+\c@section=\count276
+\c@subsection=\count277
+\c@subsubsection=\count278
+\c@paragraph=\count279
+\c@subparagraph=\count280
+\c@figure=\count281
+\c@table=\count282
+\abovecaptionskip=\skip49
+\belowcaptionskip=\skip50
+\bibindent=\dimen148
+)
+(C:\Users\Anirudh Narayan\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geom
+etry.sty
+Package: geometry 2026/03/07 v6.0 Page Geometry
+
+(C:\Users\Anirudh Narayan\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyv
+al.sty
+Package: keyval 2022/05/29 v1.15 key=value parser (DPC)
+\KV@toks@=\toks17
+)
+(C:\Users\Anirudh Narayan\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvte
+x.sty
+Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
+
+(C:\Users\Anirudh Narayan\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex
+.sty
+Package: iftex 2024/12/12 v1.0g TeX engine tests
+))
+\Gm@cnth=\count283
+\Gm@cntv=\count284
+\c@Gm@tempcnt=\count285
+\Gm@bindingoffset=\dimen149
+\Gm@wd@mp=\dimen150
+\Gm@odd@mp=\dimen151
+\Gm@even@mp=\dimen152
+\Gm@layoutwidth=\dimen153
+\Gm@layoutheight=\dimen154
+\Gm@layouthoffset=\dimen155
+\Gm@layoutvoffset=\dimen156
+\Gm@dimlist=\toks18
+
+(C:\Users\Anirudh Narayan\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geom
+etry.cfg))
+(C:\Users\Anirudh Narayan\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\times.
+sty
+Package: times 2020/03/25 PSNFSS-v9.3 (SPQR) 
+)
+! Interruption.
+<argument> \__file_size:n {booktabs.sty}
+                                        
+l.9 \usepackage
+               {enumitem}
+You rang?
+Try to insert an instruction for me (e.g., `I\showlists'),
+unless you just want to quit by typing `X'.
+
+ 
+Here is how much of TeX's memory you used:
+ 864 strings out of 467871
+ 13310 string characters out of 5413500
+ 433733 words of memory out of 5000000
+ 29813 multiletter control sequences out of 15000+600000
+ 628021 words of font info for 41 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 57i,0n,65p,182b,36s stack positions out of 10000i,1000n,20000p,200000b,200000s
+!  ==> Fatal error occurred, no output PDF file produced!
