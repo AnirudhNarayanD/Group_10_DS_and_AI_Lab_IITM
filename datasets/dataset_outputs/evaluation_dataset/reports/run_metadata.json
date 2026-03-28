@@ -1,7 +1,7 @@
 {
-  "created_at_utc": "2026-03-11T15:48:50.418058+00:00",
+  "created_at_utc": "2026-03-24T14:52:19.281765+00:00",
   "seed": 42,
-  "target_size": 1500,
+  "target_size": 0,
   "sources": [
     {
       "name": "squad_v2_questions",
@@ -148,6 +148,34 @@
       "max_rows": 1200,
       "row_filters": {},
       "streaming": true
+    },
+    {
+      "name": "jailbreakv28k_jailbreak",
+      "label": "jailbreak",
+      "hf_dataset": "JailbreakV-28K/JailBreakV-28k",
+      "hf_split": "JailBreakV_28K",
+      "hf_config": "JailBreakV_28K",
+      "text_fields": [
+        "jailbreak_query"
+      ],
+      "attack_type": "instruction_override",
+      "max_rows": 30000,
+      "row_filters": {},
+      "streaming": false
+    },
+    {
+      "name": "jailbreakv28k_redteam",
+      "label": "harmful",
+      "hf_dataset": "JailbreakV-28K/JailBreakV-28k",
+      "hf_split": "JailBreakV_28K",
+      "hf_config": "JailBreakV_28K",
+      "text_fields": [
+        "redteam_query"
+      ],
+      "attack_type": "none",
+      "max_rows": 30000,
+      "row_filters": {},
+      "streaming": false
     }
   ],
   "source_type": "huggingface_datasets",
@@ -161,7 +189,8 @@
     "rubend18_chatgpt_jailbreak_prompts": "ok:9",
     "toxic_chat_harmful": "ok:260",
     "trustairlab_regular_benign": "ok:1038",
-    "fallback_harmful": "generated:15"
+    "jailbreakv28k_jailbreak": "ok:8641",
+    "jailbreakv28k_redteam": "ok:1996"
   },
   "required_fields": [
     "prompt_id",

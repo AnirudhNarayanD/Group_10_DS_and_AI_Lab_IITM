@@ -1,0 +1,355 @@
+{
+  "model_type": "baseline",
+  "train_config": {
+    "train_data": "datasets\\dataset_outputs\\evaluation_dataset\\splits\\train.json",
+    "val_data": "datasets\\dataset_outputs\\evaluation_dataset\\splits\\validation.json",
+    "output_dir": "training_outputs\\baseline\\full_training",
+    "model_name": "distilbert-base-uncased",
+    "max_length": 512,
+    "epochs": 6,
+    "batch_size": 16,
+    "learning_rate": 2e-05,
+    "weight_decay": 0.01,
+    "warmup_ratio": 0.1,
+    "seed": 42,
+    "max_train_samples": 0,
+    "max_val_samples": 0,
+    "pooling": "cls_mean",
+    "early_stopping_patience": 3,
+    "dropout": 0.2,
+    "gradient_clip_norm": 1.0
+  },
+  "training_setup": {
+    "model_type": "baseline",
+    "model_name": "distilbert-base-uncased",
+    "architecture": "Encoder + Dropout + Linear (no MiddleBlock, no SafetyGate)",
+    "pooling_strategy": "cls_mean",
+    "max_token_length": 512,
+    "epochs": 6,
+    "batch_size": 16,
+    "learning_rate": 2e-05,
+    "weight_decay": 0.01,
+    "warmup_ratio": 0.1,
+    "warmup_steps": 528,
+    "total_training_steps": 5286,
+    "dropout": 0.2,
+    "gradient_clip_norm": 1.0,
+    "early_stopping_patience": 3,
+    "optimizer": "AdamW",
+    "scheduler": "linear_warmup_linear_decay",
+    "loss_function": "CrossEntropyLoss (class-weighted)",
+    "seed": 42,
+    "train_samples": 14093,
+    "val_samples": 3017,
+    "device": "cuda",
+    "class_weights": {
+      "formula": "weight_c = N_total / (K * N_c)",
+      "total_samples": 14093,
+      "num_classes": 3,
+      "per_class": {
+        "benign": {
+          "count": 5683,
+          "proportion": 0.4032,
+          "weight": 0.8266
+        },
+        "jailbreak": {
+          "count": 6761,
+          "proportion": 0.4797,
+          "weight": 0.6948
+        },
+        "harmful": {
+          "count": 1649,
+          "proportion": 0.117,
+          "weight": 2.8488
+        }
+      }
+    },
+    "truncation_analysis": {
+      "total": 17110,
+      "max_length_setting": 512,
+      "truncated": 78,
+      "truncation_rate": 0.0046,
+      "token_length_stats": {
+        "min": 3,
+        "max": 965,
+        "mean": 83.2,
+        "median": 25.0,
+        "p90": 262.1,
+        "p95": 385.0,
+        "p99": 453.0
+      },
+      "truncated_token_lengths": {
+        "min": 513,
+        "max": 965,
+        "mean": 581.9
+      }
+    }
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.3331011962436275,
+      "val": {
+        "loss": 0.16,
+        "accuracy": 0.95,
+        "macro_f1": 0.94,
+        "asr": {
+          "jailbreak_asr": 0.04,
+          "harmful_asr": 0.09,
+          "overall_asr": 0.05
+        },
+        "frr": 0.046,
+        "per_class": {
+          "benign": {
+            "precision": 0.96,
+            "recall": 0.95,
+            "f1": 0.96,
+            "support": 1217
+          },
+          "jailbreak": {
+            "precision": 0.97,
+            "recall": 0.96,
+            "f1": 0.97,
+            "support": 1447
+          },
+          "harmful": {
+            "precision": 0.86,
+            "recall": 0.91,
+            "f1": 0.88,
+            "support": 353
+          }
+        },
+        "confusion_matrix": [
+          [
+            1161,
+            37,
+            19
+          ],
+          [
+            17,
+            1395,
+            35
+          ],
+          [
+            28,
+            3,
+            322
+          ]
+        ]
+      }
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.10594508002722788,
+      "val": {
+        "loss": 0.14,
+        "accuracy": 0.96,
+        "macro_f1": 0.95,
+        "asr": {
+          "jailbreak_asr": 0.04,
+          "harmful_asr": 0.05,
+          "overall_asr": 0.04
+        },
+        "frr": 0.0304,
+        "per_class": {
+          "benign": {
+            "precision": 0.97,
+            "recall": 0.97,
+            "f1": 0.97,
+            "support": 1217
+          },
+          "jailbreak": {
+            "precision": 0.99,
+            "recall": 0.96,
+            "f1": 0.98,
+            "support": 1447
+          },
+          "harmful": {
+            "precision": 0.86,
+            "recall": 0.95,
+            "f1": 0.9,
+            "support": 353
+          }
+        },
+        "confusion_matrix": [
+          [
+            1180,
+            14,
+            23
+          ],
+          [
+            22,
+            1392,
+            33
+          ],
+          [
+            15,
+            2,
+            336
+          ]
+        ]
+      }
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.055530163794008686,
+      "val": {
+        "loss": 0.16,
+        "accuracy": 0.96,
+        "macro_f1": 0.95,
+        "asr": {
+          "jailbreak_asr": 0.02,
+          "harmful_asr": 0.06,
+          "overall_asr": 0.03
+        },
+        "frr": 0.0509,
+        "per_class": {
+          "benign": {
+            "precision": 0.98,
+            "recall": 0.95,
+            "f1": 0.96,
+            "support": 1217
+          },
+          "jailbreak": {
+            "precision": 0.97,
+            "recall": 0.98,
+            "f1": 0.97,
+            "support": 1447
+          },
+          "harmful": {
+            "precision": 0.88,
+            "recall": 0.94,
+            "f1": 0.91,
+            "support": 353
+          }
+        },
+        "confusion_matrix": [
+          [
+            1155,
+            41,
+            21
+          ],
+          [
+            9,
+            1413,
+            25
+          ],
+          [
+            18,
+            4,
+            331
+          ]
+        ]
+      }
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.024047287783867145,
+      "val": {
+        "loss": 0.17,
+        "accuracy": 0.97,
+        "macro_f1": 0.95,
+        "asr": {
+          "jailbreak_asr": 0.03,
+          "harmful_asr": 0.07,
+          "overall_asr": 0.04
+        },
+        "frr": 0.0296,
+        "per_class": {
+          "benign": {
+            "precision": 0.97,
+            "recall": 0.97,
+            "f1": 0.97,
+            "support": 1217
+          },
+          "jailbreak": {
+            "precision": 0.98,
+            "recall": 0.97,
+            "f1": 0.98,
+            "support": 1447
+          },
+          "harmful": {
+            "precision": 0.91,
+            "recall": 0.93,
+            "f1": 0.92,
+            "support": 353
+          }
+        },
+        "confusion_matrix": [
+          [
+            1181,
+            20,
+            16
+          ],
+          [
+            22,
+            1408,
+            17
+          ],
+          [
+            18,
+            7,
+            328
+          ]
+        ]
+      }
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.011236135164207317,
+      "val": {
+        "loss": 0.19,
+        "accuracy": 0.97,
+        "macro_f1": 0.95,
+        "asr": {
+          "jailbreak_asr": 0.03,
+          "harmful_asr": 0.08,
+          "overall_asr": 0.04
+        },
+        "frr": 0.0288,
+        "per_class": {
+          "benign": {
+            "precision": 0.96,
+            "recall": 0.97,
+            "f1": 0.97,
+            "support": 1217
+          },
+          "jailbreak": {
+            "precision": 0.98,
+            "recall": 0.97,
+            "f1": 0.98,
+            "support": 1447
+          },
+          "harmful": {
+            "precision": 0.92,
+            "recall": 0.92,
+            "f1": 0.92,
+            "support": 353
+          }
+        },
+        "confusion_matrix": [
+          [
+            1182,
+            24,
+            11
+          ],
+          [
+            20,
+            1409,
+            18
+          ],
+          [
+            25,
+            5,
+            323
+          ]
+        ]
+      }
+    }
+  ],
+  "best_val_macro_f1": 0.95,
+  "best_model_path": "training_outputs\\baseline\\full_training\\best_model.pt",
+  "early_stopped": true,
+  "epochs_completed": 5,
+  "tokenizer_save_error": ""
+}

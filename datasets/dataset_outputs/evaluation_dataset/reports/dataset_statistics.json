@@ -1,70 +1,71 @@
 {
-  "total_prompts": 1500,
+  "total_prompts": 20137,
   "class_distribution": {
-    "benign": 670,
-    "jailbreak": 455,
-    "harmful": 375
+    "jailbreak": 9662,
+    "harmful": 2356,
+    "benign": 8119
   },
   "jailbreak_attack_distribution": {
-    "role_play": 205,
-    "instruction_override": 124,
-    "multi_step": 84,
-    "prompt_injection": 41,
-    "obfuscation": 1
+    "instruction_override": 4875,
+    "multi_step": 170,
+    "obfuscation": 3643,
+    "role_play": 801,
+    "prompt_injection": 173
   },
   "source_distribution": {
-    "squad_v2_questions": 281,
-    "alpaca_instructions": 280,
-    "trustairlab_regular_benign": 102,
-    "jbb_behaviors_benign": 7,
-    "toxic_chat_jailbreak_variation": 49,
-    "trustairlab_in_the_wild_jailbreak": 328,
-    "toxic_chat_jailbreak": 47,
-    "trustairlab_in_the_wild_jailbreak_variation": 27,
-    "rubend18_chatgpt_jailbreak_prompts": 4,
-    "fallback_harmful": 15,
+    "jailbreakv28k_jailbreak": 8641,
+    "jailbreakv28k_redteam": 1996,
+    "alpaca_instructions": 3496,
+    "trustairlab_in_the_wild_jailbreak": 784,
+    "squad_v2_questions": 3485,
+    "trustairlab_regular_benign": 1038,
+    "jbb_behaviors_benign": 100,
+    "toxic_chat_jailbreak_variation": 108,
+    "toxic_chat_harmful": 260,
+    "toxic_chat_jailbreak": 108,
     "jbb_behaviors_harmful": 100,
-    "toxic_chat_harmful": 260
+    "trustairlab_in_the_wild_jailbreak_variation": 12,
+    "rubend18_chatgpt_jailbreak_prompts": 9
   },
   "split_distribution": {
-    "train": 1045,
-    "test": 233,
-    "validation": 222
+    "validation": 3017,
+    "train": 14093,
+    "test": 3027
   },
   "split_class_distribution": {
-    "validation": {
-      "benign": 100,
-      "jailbreak": 66,
-      "harmful": 56
-    },
     "train": {
-      "benign": 468,
-      "jailbreak": 315,
-      "harmful": 262
+      "harmful": 1649,
+      "benign": 5683,
+      "jailbreak": 6761
+    },
+    "validation": {
+      "jailbreak": 1447,
+      "benign": 1217,
+      "harmful": 353
     },
     "test": {
-      "benign": 102,
-      "jailbreak": 74,
-      "harmful": 57
+      "harmful": 354,
+      "benign": 1219,
+      "jailbreak": 1454
     }
   },
   "structure_distribution": {
-    "question": 381,
-    "statement": 899,
-    "imperative": 220
+    "question": 8481,
+    "statement": 10676,
+    "imperative": 980
   },
   "topic_distribution": {
-    "general": 1193,
-    "technology": 129,
-    "education": 112,
-    "health": 16,
-    "travel": 19,
-    "science": 13,
-    "security": 18
+    "technology": 1880,
+    "general": 16426,
+    "education": 1047,
+    "security": 300,
+    "travel": 157,
+    "health": 228,
+    "science": 99
   },
   "length_stats": {
-    "min": 15,
-    "max": 2490,
-    "avg": 464.18
+    "min": 12,
+    "max": 2500,
+    "avg": 361.65
   }
 }

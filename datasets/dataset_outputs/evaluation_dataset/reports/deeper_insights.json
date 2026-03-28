@@ -1,137 +1,269 @@
 {
-  "total_prompts": 1500,
+  "total_prompts": 20137,
   "class_distribution": {
-    "benign": 670,
-    "jailbreak": 455,
-    "harmful": 375
+    "jailbreak": 9662,
+    "harmful": 2356,
+    "benign": 8119
   },
   "split_distribution": {
-    "train": 1045,
-    "test": 233,
-    "validation": 222
+    "validation": 3017,
+    "train": 14093,
+    "test": 3027
   },
   "jailbreak_attack_distribution": {
-    "role_play": 205,
-    "instruction_override": 124,
-    "multi_step": 84,
-    "prompt_injection": 41,
-    "obfuscation": 1
+    "instruction_override": 4875,
+    "multi_step": 170,
+    "obfuscation": 3643,
+    "role_play": 801,
+    "prompt_injection": 173
   },
-  "jailbreak_attack_entropy_bits": 1.8116,
+  "jailbreak_attack_entropy_bits": 1.5328,
+  "dataset_inventory": {
+    "total_unique_hf_datasets": 7,
+    "total_source_specs": 11,
+    "sources": [
+      {
+        "name": "rajpurkar/squad_v2",
+        "spec_name": "squad_v2_questions",
+        "label": "benign",
+        "description": "Reading comprehension questions from SQuAD v2",
+        "max_rows": 3500
+      },
+      {
+        "name": "yahma/alpaca-cleaned",
+        "spec_name": "alpaca_instructions",
+        "label": "benign",
+        "description": "Cleaned instruction-following prompts from Alpaca",
+        "max_rows": 3500
+      },
+      {
+        "name": "JailbreakBench/JBB-Behaviors",
+        "spec_names": [
+          "jbb_behaviors_harmful",
+          "jbb_behaviors_benign"
+        ],
+        "labels": [
+          "harmful",
+          "benign"
+        ],
+        "description": "Curated harmful and benign behavior goals from JailbreakBench",
+        "max_rows": 300
+      },
+      {
+        "name": "lmsys/toxic-chat",
+        "spec_names": [
+          "toxic_chat_jailbreak",
+          "toxic_chat_harmful"
+        ],
+        "labels": [
+          "jailbreak",
+          "harmful"
+        ],
+        "description": "Real-world toxic user inputs from LMSYS Chatbot Arena, filtered by jailbreaking and toxicity flags",
+        "max_rows": 5000
+      },
+      {
+        "name": "TrustAIRLab/in-the-wild-jailbreak-prompts",
+        "spec_names": [
+          "trustairlab_in_the_wild_jailbreak",
+          "trustairlab_regular_benign"
+        ],
+        "labels": [
+          "jailbreak",
+          "benign"
+        ],
+        "description": "Real-world jailbreak prompts and regular prompts collected in the wild",
+        "max_rows": 1200
+      },
+      {
+        "name": "rubend18/ChatGPT-Jailbreak-Prompts",
+        "spec_name": "rubend18_chatgpt_jailbreak_prompts",
+        "label": "jailbreak",
+        "description": "Community-sourced ChatGPT jailbreak prompts (role-play style)",
+        "max_rows": 300
+      },
+      {
+        "name": "JailbreakV-28K/JailBreakV-28k",
+        "spec_names": [
+          "jailbreakv28k_jailbreak",
+          "jailbreakv28k_redteam"
+        ],
+        "labels": [
+          "jailbreak",
+          "harmful"
+        ],
+        "description": "Large-scale jailbreak benchmark with 28K attack prompts across 7 formats (Template, SD, figstep, typo, Persuade, Logic, SD_typo) and 16 policy categories; includes both jailbreak queries and underlying red-team queries",
+        "total_available_rows": 28000,
+        "max_rows": 2000,
+        "attack_formats": [
+          "Template",
+          "SD",
+          "SD_typo",
+          "figstep",
+          "typo",
+          "Persuade",
+          "Logic"
+        ],
+        "policy_categories": 16
+      }
+    ]
+  },
+  "jailbreakv28k_analysis": {
+    "total_jbv_records": 10637,
+    "by_label": {
+      "jailbreak": 8641,
+      "harmful": 1996
+    },
+    "by_attack_type": {
+      "instruction_override": 4584,
+      "obfuscation": 3640,
+      "role_play": 342,
+      "prompt_injection": 74,
+      "multi_step": 1
+    },
+    "by_jbv_format": {
+      "Template": 5742,
+      "SD_typo": 1820,
+      "SD": 1820,
+      "figstep": 751,
+      "Persuade": 421,
+      "Logic": 83
+    },
+    "by_jbv_policy": {
+      "Malware": 1172,
+      "Illegal Activity": 1089,
+      "Fraud": 951,
+      "Bias": 823,
+      "Economic Harm": 807,
+      "Government Decision": 680,
+      "Unethical Behavior": 662,
+      "Hate Speech": 593,
+      "Violence": 584,
+      "Physical Harm": 563,
+      "Tailored Unlicensed Advice": 549,
+      "Political Sensitivity": 524,
+      "Animal Abuse": 500,
+      "Privacy Violation": 413,
+      "Child Abuse Content": 372,
+      "Health Consultation": 355
+    },
+    "jbv_attack_entropy_bits": 1.2553
+  },
+  "source_contribution": {
+    "jailbreakv28k_jailbreak": 8641,
+    "alpaca_instructions": 3496,
+    "squad_v2_questions": 3485,
+    "jailbreakv28k_redteam": 1996,
+    "trustairlab_regular_benign": 1038,
+    "trustairlab_in_the_wild_jailbreak": 784,
+    "toxic_chat_harmful": 260,
+    "toxic_chat_jailbreak_variation": 108,
+    "toxic_chat_jailbreak": 108,
+    "jbb_behaviors_benign": 100,
+    "jbb_behaviors_harmful": 100,
+    "trustairlab_in_the_wild_jailbreak_variation": 12,
+    "rubend18_chatgpt_jailbreak_prompts": 9
+  },
   "length_global": {
-    "min": 15,
-    "max": 2490,
-    "mean": 464.18,
-    "median": 92.0,
-    "p90": 1534.1,
-    "p95": 1874.2
+    "min": 12,
+    "max": 2500,
+    "mean": 361.65,
+    "median": 109,
+    "p90": 1188.0,
+    "p95": 1676.2
   },
   "length_by_class": {
-    "benign": {
-      "count": 670,
-      "mean": 165.88,
-      "median": 58.0,
-      "p90": 422.0
-    },
     "jailbreak": {
-      "count": 455,
-      "mean": 1127.17,
-      "median": 1109,
-      "p90": 2075.8
+      "count": 9662,
+      "mean": 608.33,
+      "median": 421.0,
+      "p90": 1631.0
     },
     "harmful": {
-      "count": 375,
-      "mean": 192.71,
-      "median": 89,
-      "p90": 544.6
+      "count": 2356,
+      "mean": 93.97,
+      "median": 70.0,
+      "p90": 132.0
+    },
+    "benign": {
+      "count": 8119,
+      "mean": 145.75,
+      "median": 58,
+      "p90": 321.4
     }
   },
   "global_class_ratio": {
-    "benign": 0.446667,
-    "jailbreak": 0.303333,
-    "harmful": 0.25
+    "jailbreak": 0.479813,
+    "harmful": 0.116999,
+    "benign": 0.403188
   },
   "split_class_ratio": {
     "train": {
-      "benign": 0.447847,
-      "jailbreak": 0.301435,
-      "harmful": 0.250718
+      "jailbreak": 0.479742,
+      "harmful": 0.117008,
+      "benign": 0.40325
     },
     "validation": {
-      "benign": 0.45045,
-      "jailbreak": 0.297297,
-      "harmful": 0.252252
+      "jailbreak": 0.479616,
+      "harmful": 0.117004,
+      "benign": 0.403381
     },
     "test": {
-      "benign": 0.437768,
-      "jailbreak": 0.317597,
-      "harmful": 0.244635
+      "jailbreak": 0.480344,
+      "harmful": 0.116947,
+      "benign": 0.402709
     }
   },
   "split_ratio_drift": {
     "train": {
-      "benign": 0.00118,
-      "jailbreak": 0.001898,
-      "harmful": 0.000718
+      "jailbreak": 7.2e-05,
+      "harmful": 1e-05,
+      "benign": 6.2e-05
     },
     "validation": {
-      "benign": 0.003784,
-      "jailbreak": 0.006036,
-      "harmful": 0.002252
+      "jailbreak": 0.000198,
+      "harmful": 5e-06,
+      "benign": 0.000193
     },
     "test": {
-      "benign": 0.008898,
-      "jailbreak": 0.014263,
-      "harmful": 0.005365
+      "jailbreak": 0.00053,
+      "harmful": 5.1e-05,
+      "benign": 0.000479
     }
   },
   "benign_vs_attack_ratio": {
-    "benign": 670,
-    "attack_total": 830,
-    "attack_to_benign": 1.2388
+    "benign": 8119,
+    "attack_total": 12018,
+    "attack_to_benign": 1.4802
   },
   "top_sources_by_label": {
-    "benign": [
-      [
-        "squad_v2_questions",
-        281
-      ],
-      [
-        "alpaca_instructions",
-        280
-      ],
-      [
-        "trustairlab_regular_benign",
-        102
-      ],
-      [
-        "jbb_behaviors_benign",
-        7
-      ]
-    ],
     "jailbreak": [
       [
+        "jailbreakv28k_jailbreak",
+        8641
+      ],
+      [
         "trustairlab_in_the_wild_jailbreak",
-        328
+        784
       ],
       [
         "toxic_chat_jailbreak_variation",
-        49
+        108
       ],
       [
         "toxic_chat_jailbreak",
-        47
+        108
       ],
       [
         "trustairlab_in_the_wild_jailbreak_variation",
-        27
-      ],
-      [
-        "rubend18_chatgpt_jailbreak_prompts",
-        4
+        12
       ]
     ],
     "harmful": [
+      [
+        "jailbreakv28k_redteam",
+        1996
+      ],
       [
         "toxic_chat_harmful",
         260
@@ -139,17 +271,34 @@
       [
         "jbb_behaviors_harmful",
         100
+      ]
+    ],
+    "benign": [
+      [
+        "alpaca_instructions",
+        3496
       ],
       [
-        "fallback_harmful",
-        15
+        "squad_v2_questions",
+        3485
+      ],
+      [
+        "trustairlab_regular_benign",
+        1038
+      ],
+      [
+        "jbb_behaviors_benign",
+        100
       ]
     ]
   },
   "insight_notes": [
+    "Dataset draws from 7 unique Hugging Face datasets via 11 source specs.",
     "Class distribution is attack-heavy enough to stress false-negative detection while preserving benign coverage for false-positive checks.",
     "Split drift is low, indicating stable class proportions across train/validation/test.",
-    "Jailbreak taxonomy coverage exists across multiple strategies; monitor low-count attack types for threshold overfitting.",
-    "Long-tail prompt lengths can impact model calibration; consider length-aware threshold diagnostics."
+    "Jailbreak taxonomy coverage spans multiple strategies; monitor low-count attack types for threshold overfitting.",
+    "Long-tail prompt lengths can impact model calibration; consider length-aware threshold diagnostics.",
+    "JailBreakV-28K adds diverse attack formats (Template, SD, figstep, typo, Persuade, Logic, SD_typo) covering 16 safety-policy categories.",
+    "JailBreakV-28K red-team queries provide the underlying harmful intents, complementing the jailbreak-wrapped variants for balanced harmful-class coverage."
   ]
 }

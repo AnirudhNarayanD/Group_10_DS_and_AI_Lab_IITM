@@ -8,7 +8,7 @@ from statistics import mean, median
 
 
 ROOT = Path(__file__).resolve().parent
-DATASET_DIR = ROOT / "outputs" / "evaluation_dataset"
+DATASET_DIR = ROOT / "dataset_outputs" / "evaluation_dataset"
 REPORTS_DIR = DATASET_DIR / "reports"
 
 
@@ -76,12 +76,108 @@ def main() -> None:
     attack_total = by_label.get("jailbreak", 0) + by_label.get("harmful", 0)
     benign_total = by_label.get("benign", 0)
 
+    # --- Dataset inventory ---
+    dataset_inventory = {
+        "total_unique_hf_datasets": 7,
+        "total_source_specs": 11,
+        "sources": [
+            {
+                "name": "rajpurkar/squad_v2",
+                "spec_name": "squad_v2_questions",
+                "label": "benign",
+                "description": "Reading comprehension questions from SQuAD v2",
+                "max_rows": 3500,
+            },
+            {
+                "name": "yahma/alpaca-cleaned",
+                "spec_name": "alpaca_instructions",
+                "label": "benign",
+                "description": "Cleaned instruction-following prompts from Alpaca",
+                "max_rows": 3500,
+            },
+            {
+                "name": "JailbreakBench/JBB-Behaviors",
+                "spec_names": ["jbb_behaviors_harmful", "jbb_behaviors_benign"],
+                "labels": ["harmful", "benign"],
+                "description": "Curated harmful and benign behavior goals from JailbreakBench",
+                "max_rows": 300,
+            },
+            {
+                "name": "lmsys/toxic-chat",
+                "spec_names": ["toxic_chat_jailbreak", "toxic_chat_harmful"],
+                "labels": ["jailbreak", "harmful"],
+                "description": "Real-world toxic user inputs from LMSYS Chatbot Arena, filtered by jailbreaking and toxicity flags",
+                "max_rows": 5000,
+            },
+            {
+                "name": "TrustAIRLab/in-the-wild-jailbreak-prompts",
+                "spec_names": ["trustairlab_in_the_wild_jailbreak", "trustairlab_regular_benign"],
+                "labels": ["jailbreak", "benign"],
+                "description": "Real-world jailbreak prompts and regular prompts collected in the wild",
+                "max_rows": 1200,
+            },
+            {
+                "name": "rubend18/ChatGPT-Jailbreak-Prompts",
+                "spec_name": "rubend18_chatgpt_jailbreak_prompts",
+                "label": "jailbreak",
+                "description": "Community-sourced ChatGPT jailbreak prompts (role-play style)",
+                "max_rows": 300,
+            },
+            {
+                "name": "JailbreakV-28K/JailBreakV-28k",
+                "spec_names": ["jailbreakv28k_jailbreak", "jailbreakv28k_redteam"],
+                "labels": ["jailbreak", "harmful"],
+                "description": "Large-scale jailbreak benchmark with 28K attack prompts across 7 formats (Template, SD, figstep, typo, Persuade, Logic, SD_typo) and 16 policy categories; includes both jailbreak queries and underlying red-team queries",
+                "total_available_rows": 28000,
+                "max_rows": 2000,
+                "attack_formats": ["Template", "SD", "SD_typo", "figstep", "typo", "Persuade", "Logic"],
+                "policy_categories": 16,
+            },
+        ],
+    }
+
+    # --- JailBreakV-28K specific analysis ---
+    jbv_records = [r for r in records if r.get("data_source", "").startswith("jailbreakv28k")]
+    jbv_stats = {}
+    if jbv_records:
+        jbv_by_label = Counter(r["label"] for r in jbv_records)
+        jbv_by_attack = Counter(r["attack_type"] for r in jbv_records if r["label"] == "jailbreak")
+        jbv_formats = Counter()
+        jbv_policies = Counter()
+        for r in jbv_records:
+            meta = r.get("metadata", {})
+            if isinstance(meta, str):
+                try:
+                    meta = json.loads(meta)
+                except (json.JSONDecodeError, TypeError):
+                    meta = {}
+            fmt = meta.get("jbv_format", "")
+            pol = meta.get("jbv_policy", "")
+            if fmt:
+                jbv_formats[fmt] += 1
+            if pol:
+                jbv_policies[pol] += 1
+        jbv_stats = {
+            "total_jbv_records": len(jbv_records),
+            "by_label": dict(jbv_by_label),
+            "by_attack_type": dict(jbv_by_attack),
+            "by_jbv_format": dict(jbv_formats.most_common()),
+            "by_jbv_policy": dict(jbv_policies.most_common()),
+            "jbv_attack_entropy_bits": round(entropy(jbv_by_attack), 4),
+        }
+
+    # --- Source contribution analysis ---
+    all_sources = Counter(r["data_source"] for r in records)
+
     summary = {
         "total_prompts": len(records),
         "class_distribution": dict(by_label),
         "split_distribution": dict(by_split),
         "jailbreak_attack_distribution": dict(by_attack),
         "jailbreak_attack_entropy_bits": round(entropy(by_attack), 4),
+        "dataset_inventory": dataset_inventory,
+        "jailbreakv28k_analysis": jbv_stats,
+        "source_contribution": dict(all_sources.most_common()),
         "length_global": {
             "min": min(lengths) if lengths else 0,
             "max": max(lengths) if lengths else 0,
@@ -112,10 +208,13 @@ def main() -> None:
             for label, source_counts in source_by_label.items()
         },
         "insight_notes": [
+            f"Dataset draws from {dataset_inventory['total_unique_hf_datasets']} unique Hugging Face datasets via {dataset_inventory['total_source_specs']} source specs.",
             "Class distribution is attack-heavy enough to stress false-negative detection while preserving benign coverage for false-positive checks.",
             "Split drift is low, indicating stable class proportions across train/validation/test.",
-            "Jailbreak taxonomy coverage exists across multiple strategies; monitor low-count attack types for threshold overfitting.",
+            "Jailbreak taxonomy coverage spans multiple strategies; monitor low-count attack types for threshold overfitting.",
             "Long-tail prompt lengths can impact model calibration; consider length-aware threshold diagnostics.",
+            "JailBreakV-28K adds diverse attack formats (Template, SD, figstep, typo, Persuade, Logic, SD_typo) covering 16 safety-policy categories.",
+            "JailBreakV-28K red-team queries provide the underlying harmful intents, complementing the jailbreak-wrapped variants for balanced harmful-class coverage.",
         ],
     }
 
@@ -128,6 +227,14 @@ def main() -> None:
     lines = []
     lines.append("# Deeper Insights Report")
     lines.append("")
+
+    lines.append("## Dataset Inventory")
+    lines.append(f"- **Unique HuggingFace datasets**: {dataset_inventory['total_unique_hf_datasets']}")
+    lines.append(f"- **Total source specs**: {dataset_inventory['total_source_specs']}")
+    for src in dataset_inventory["sources"]:
+        lines.append(f"  - `{src['name']}` — {src['description']}")
+    lines.append("")
+
     lines.append("## Core Summary")
     lines.append(f"- Total prompts: {summary['total_prompts']}")
     lines.append(f"- Class distribution: {summary['class_distribution']}")
@@ -135,6 +242,25 @@ def main() -> None:
     lines.append(f"- Jailbreak attack distribution: {summary['jailbreak_attack_distribution']}")
     lines.append(f"- Jailbreak attack entropy (bits): {summary['jailbreak_attack_entropy_bits']}")
     lines.append("")
+
+    lines.append("## Source Contribution")
+    for src_name, count in all_sources.most_common():
+        pct = round(100 * count / len(records), 1)
+        lines.append(f"- `{src_name}`: {count} ({pct}%)")
+    lines.append("")
+
+    if jbv_stats:
+        lines.append("## JailBreakV-28K Analysis")
+        lines.append(f"- Total JBV records: {jbv_stats['total_jbv_records']}")
+        lines.append(f"- By label: {jbv_stats['by_label']}")
+        lines.append(f"- By attack type: {jbv_stats['by_attack_type']}")
+        if jbv_stats.get("by_jbv_format"):
+            lines.append(f"- By JBV format: {dict(jbv_stats['by_jbv_format'])}")
+        if jbv_stats.get("by_jbv_policy"):
+            lines.append(f"- By JBV policy (top): {dict(list(jbv_stats['by_jbv_policy'].items())[:10])}")
+        lines.append(f"- Attack type entropy (bits): {jbv_stats['jbv_attack_entropy_bits']}")
+        lines.append("")
+
     lines.append("## Length Insights")
     lines.append(f"- Global length stats: {summary['length_global']}")
     lines.append(f"- Length by class: {summary['length_by_class']}")

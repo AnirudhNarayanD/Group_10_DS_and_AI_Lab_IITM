@@ -1,0 +1,428 @@
+{
+  "model_type": "middleware",
+  "train_config": {
+    "train_data": "datasets\\dataset_outputs\\evaluation_dataset\\splits\\train.json",
+    "val_data": "datasets\\dataset_outputs\\evaluation_dataset\\splits\\validation.json",
+    "output_dir": "training_outputs\\middleware\\full_training",
+    "model_name": "distilbert-base-uncased",
+    "max_length": 512,
+    "epochs": 6,
+    "batch_size": 16,
+    "learning_rate": 2e-05,
+    "weight_decay": 0.01,
+    "warmup_ratio": 0.1,
+    "seed": 42,
+    "max_train_samples": 0,
+    "max_val_samples": 0,
+    "smoke_mode": false,
+    "pooling": "cls_mean",
+    "early_stopping_patience": 3,
+    "dropout": 0.2,
+    "gradient_clip_norm": 1.0,
+    "intermediate_size": 512,
+    "decoder_hidden_size": 256,
+    "safety_gate_hidden": 128,
+    "enable_safety_gate": true,
+    "safety_gate_weight": 0.3
+  },
+  "training_setup": {
+    "model_type": "middleware",
+    "model_name": "distilbert-base-uncased",
+    "architecture": "Encoder \u2192 MiddleBlock \u2192 Decoder + SafetyGate",
+    "pooling_strategy": "cls_mean",
+    "max_token_length": 512,
+    "epochs": 6,
+    "batch_size": 16,
+    "learning_rate": 2e-05,
+    "weight_decay": 0.01,
+    "warmup_ratio": 0.1,
+    "warmup_steps": 528,
+    "total_training_steps": 5286,
+    "dropout": 0.2,
+    "gradient_clip_norm": 1.0,
+    "early_stopping_patience": 3,
+    "optimizer": "AdamW",
+    "scheduler": "linear_warmup_linear_decay",
+    "loss_function": "CrossEntropyLoss (class-weighted) + BCE (safety gate)",
+    "safety_gate_weight": 0.3,
+    "seed": 42,
+    "train_samples": 14093,
+    "val_samples": 3017,
+    "device": "cuda",
+    "class_weights": {
+      "formula": "weight_c = N_total / (K * N_c)",
+      "total_samples": 14093,
+      "num_classes": 3,
+      "per_class": {
+        "benign": {
+          "count": 5683,
+          "proportion": 0.4032,
+          "weight": 0.8266
+        },
+        "jailbreak": {
+          "count": 6761,
+          "proportion": 0.4797,
+          "weight": 0.6948
+        },
+        "harmful": {
+          "count": 1649,
+          "proportion": 0.117,
+          "weight": 2.8488
+        }
+      },
+      "justification": "Inverse-frequency weighting ensures the loss function penalizes errors on minority classes (harmful, jailbreak) proportionally more than on the majority class (benign). This prevents the model from achieving high accuracy by simply predicting the majority class, which is critical for a guardrail system where missing an attack is more costly than a false alarm."
+    },
+    "arch_config": {
+      "intermediate_size": 512,
+      "decoder_hidden_size": 256,
+      "safety_gate_hidden": 128,
+      "enable_safety_gate": true
+    },
+    "truncation_analysis": {
+      "total": 17110,
+      "max_length_setting": 512,
+      "truncated": 78,
+      "truncation_rate": 0.0046,
+      "token_length_stats": {
+        "min": 3,
+        "max": 965,
+        "mean": 83.2,
+        "median": 25.0,
+        "p90": 262.1,
+        "p95": 385.0,
+        "p99": 453.0
+      },
+      "truncated_token_lengths": {
+        "min": 513,
+        "max": 965,
+        "mean": 581.9
+      }
+    }
+  },
+  "smoke_mode": false,
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.45811943155708096,
+      "val": {
+        "loss": 0.14,
+        "accuracy": 0.95,
+        "macro_f1": 0.94,
+        "asr": {
+          "jailbreak_asr": 0.04,
+          "harmful_asr": 0.08,
+          "overall_asr": 0.05
+        },
+        "frr": 0.0427,
+        "per_class": {
+          "benign": {
+            "precision": 0.96,
+            "recall": 0.96,
+            "f1": 0.96,
+            "support": 1217
+          },
+          "jailbreak": {
+            "precision": 0.98,
+            "recall": 0.96,
+            "f1": 0.97,
+            "support": 1447
+          },
+          "harmful": {
+            "precision": 0.86,
+            "recall": 0.92,
+            "f1": 0.89,
+            "support": 353
+          }
+        },
+        "confusion_matrix": [
+          [
+            1165,
+            24,
+            28
+          ],
+          [
+            31,
+            1391,
+            25
+          ],
+          [
+            22,
+            6,
+            325
+          ]
+        ],
+        "safety_gate_avg_score": 0.5926
+      }
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.1359518423569986,
+      "val": {
+        "loss": 0.16,
+        "accuracy": 0.96,
+        "macro_f1": 0.95,
+        "asr": {
+          "jailbreak_asr": 0.03,
+          "harmful_asr": 0.04,
+          "overall_asr": 0.03
+        },
+        "frr": 0.0477,
+        "per_class": {
+          "benign": {
+            "precision": 0.98,
+            "recall": 0.95,
+            "f1": 0.96,
+            "support": 1217
+          },
+          "jailbreak": {
+            "precision": 0.98,
+            "recall": 0.97,
+            "f1": 0.97,
+            "support": 1447
+          },
+          "harmful": {
+            "precision": 0.85,
+            "recall": 0.96,
+            "f1": 0.9,
+            "support": 353
+          }
+        },
+        "confusion_matrix": [
+          [
+            1159,
+            30,
+            28
+          ],
+          [
+            15,
+            1400,
+            32
+          ],
+          [
+            14,
+            1,
+            338
+          ]
+        ],
+        "safety_gate_avg_score": 0.604
+      }
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.06765494960995888,
+      "val": {
+        "loss": 0.17,
+        "accuracy": 0.97,
+        "macro_f1": 0.95,
+        "asr": {
+          "jailbreak_asr": 0.03,
+          "harmful_asr": 0.09,
+          "overall_asr": 0.04
+        },
+        "frr": 0.0205,
+        "per_class": {
+          "benign": {
+            "precision": 0.96,
+            "recall": 0.98,
+            "f1": 0.97,
+            "support": 1217
+          },
+          "jailbreak": {
+            "precision": 0.98,
+            "recall": 0.97,
+            "f1": 0.98,
+            "support": 1447
+          },
+          "harmful": {
+            "precision": 0.92,
+            "recall": 0.91,
+            "f1": 0.91,
+            "support": 353
+          }
+        },
+        "confusion_matrix": [
+          [
+            1192,
+            18,
+            7
+          ],
+          [
+            23,
+            1402,
+            22
+          ],
+          [
+            26,
+            5,
+            322
+          ]
+        ],
+        "safety_gate_avg_score": 0.5873
+      }
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.035466365694145276,
+      "val": {
+        "loss": 0.19,
+        "accuracy": 0.97,
+        "macro_f1": 0.96,
+        "asr": {
+          "jailbreak_asr": 0.03,
+          "harmful_asr": 0.05,
+          "overall_asr": 0.03
+        },
+        "frr": 0.037,
+        "per_class": {
+          "benign": {
+            "precision": 0.97,
+            "recall": 0.96,
+            "f1": 0.97,
+            "support": 1217
+          },
+          "jailbreak": {
+            "precision": 0.98,
+            "recall": 0.97,
+            "f1": 0.97,
+            "support": 1447
+          },
+          "harmful": {
+            "precision": 0.91,
+            "recall": 0.95,
+            "f1": 0.93,
+            "support": 353
+          }
+        },
+        "confusion_matrix": [
+          [
+            1172,
+            33,
+            12
+          ],
+          [
+            15,
+            1409,
+            23
+          ],
+          [
+            16,
+            3,
+            334
+          ]
+        ],
+        "safety_gate_avg_score": 0.599
+      }
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.021071634097896592,
+      "val": {
+        "loss": 0.21,
+        "accuracy": 0.96,
+        "macro_f1": 0.95,
+        "asr": {
+          "jailbreak_asr": 0.03,
+          "harmful_asr": 0.06,
+          "overall_asr": 0.03
+        },
+        "frr": 0.0378,
+        "per_class": {
+          "benign": {
+            "precision": 0.97,
+            "recall": 0.96,
+            "f1": 0.97,
+            "support": 1217
+          },
+          "jailbreak": {
+            "precision": 0.97,
+            "recall": 0.97,
+            "f1": 0.97,
+            "support": 1447
+          },
+          "harmful": {
+            "precision": 0.9,
+            "recall": 0.94,
+            "f1": 0.92,
+            "support": 353
+          }
+        },
+        "confusion_matrix": [
+          [
+            1171,
+            32,
+            14
+          ],
+          [
+            17,
+            1409,
+            21
+          ],
+          [
+            16,
+            6,
+            331
+          ]
+        ],
+        "safety_gate_avg_score": 0.5999
+      }
+    },
+    {
+      "epoch": 6,
+      "train_loss": 0.008631053499503298,
+      "val": {
+        "loss": 0.22,
+        "accuracy": 0.97,
+        "macro_f1": 0.96,
+        "asr": {
+          "jailbreak_asr": 0.03,
+          "harmful_asr": 0.08,
+          "overall_asr": 0.04
+        },
+        "frr": 0.0255,
+        "per_class": {
+          "benign": {
+            "precision": 0.97,
+            "recall": 0.97,
+            "f1": 0.97,
+            "support": 1217
+          },
+          "jailbreak": {
+            "precision": 0.98,
+            "recall": 0.97,
+            "f1": 0.98,
+            "support": 1447
+          },
+          "harmful": {
+            "precision": 0.92,
+            "recall": 0.92,
+            "f1": 0.92,
+            "support": 353
+          }
+        },
+        "confusion_matrix": [
+          [
+            1186,
+            21,
+            10
+          ],
+          [
+            22,
+            1407,
+            18
+          ],
+          [
+            20,
+            7,
+            326
+          ]
+        ],
+        "safety_gate_avg_score": 0.592
+      }
+    }
+  ],
+  "best_val_macro_f1": 0.96,
+  "best_model_path": "training_outputs\\middleware\\full_training\\best_model.pt",
+  "early_stopped": false,
+  "epochs_completed": 6,
+  "tokenizer_save_error": ""
+}

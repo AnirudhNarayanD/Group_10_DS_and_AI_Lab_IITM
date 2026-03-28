@@ -181,6 +181,26 @@ DEFAULT_SOURCES: Tuple[SourceSpec, ...] = (
 		max_rows=1200,
 		streaming=True,
 	),
+	SourceSpec(
+		name="jailbreakv28k_jailbreak",
+		label=LABEL_JAILBREAK,
+		hf_dataset="JailbreakV-28K/JailBreakV-28k",
+		hf_config="JailBreakV_28K",
+		hf_split="JailBreakV_28K",
+		text_fields=("jailbreak_query",),
+		attack_type="instruction_override",
+		max_rows=30000,
+	),
+	SourceSpec(
+		name="jailbreakv28k_redteam",
+		label=LABEL_HARMFUL,
+		hf_dataset="JailbreakV-28K/JailBreakV-28k",
+		hf_config="JailBreakV_28K",
+		hf_split="JailBreakV_28K",
+		text_fields=("redteam_query",),
+		attack_type=ATTACK_NONE,
+		max_rows=30000,
+	),
 )
 
 
@@ -323,7 +343,8 @@ def parse_source_payload(source: SourceSpec, cache_dir: Path) -> List[dict]:
 		try:
 			payload = json.loads(cache_file.read_text(encoding="utf-8", errors="ignore"))
 			if isinstance(payload, list):
-				return [x for x in payload if isinstance(x, dict)]
+				cached = [x for x in payload if isinstance(x, dict)]
+				return cached
 		except json.JSONDecodeError:
 			pass
 
@@ -398,6 +419,18 @@ def bootstrap_fallback_prompts(label: str, seed: int, target_count: int) -> List
 	return generated
 
 
+# Map JailBreakV-28K 'format' field to our jailbreak taxonomy
+_JAILBREAKV_FORMAT_MAP = {
+	"Template": "instruction_override",
+	"SD": "obfuscation",
+	"SD_typo": "obfuscation",
+	"figstep": "multi_step",
+	"typo": "obfuscation",
+	"Persuade": "role_play",
+	"Logic": "prompt_injection",
+}
+
+
 def map_rows_to_records(
 	rows: Iterable[dict],
 	source: SourceSpec,
@@ -422,10 +455,21 @@ def map_rows_to_records(
 
 		attack_type = ATTACK_NONE
 		if source.label == LABEL_JAILBREAK:
-			attack_type = infer_attack_type(normalized, source.attack_type)
+			# Use JailBreakV-28K 'format' field for finer attack type mapping
+			jbv_format = row.get("format", "")
+			if jbv_format and jbv_format in _JAILBREAKV_FORMAT_MAP:
+				attack_type = _JAILBREAKV_FORMAT_MAP[jbv_format]
+			else:
+				attack_type = infer_attack_type(normalized, source.attack_type)
 
 		prompt_id = stable_hash(f"{source.name}|{source.label}|{normalized}")[:16]
 		family_id = stable_hash(f"family|{source.name}|{normalized.lower()}")[:12]
+		record_metadata: Dict[str, str] = {"origin": "download"}
+		# Preserve JailBreakV-28K metadata for richer per-attack analysis
+		if row.get("format"):
+			record_metadata["jbv_format"] = str(row["format"])
+		if row.get("policy"):
+			record_metadata["jbv_policy"] = str(row["policy"])
 		records.append(
 			PromptRecord(
 				prompt_id=prompt_id,
@@ -435,7 +479,7 @@ def map_rows_to_records(
 				data_source=source.name,
 				expected_outcome=expected_outcome_for(source.label),
 				family_id=family_id,
-				metadata={"origin": "download"},
+				metadata=record_metadata,
 			)
 		)
 	return records
@@ -743,7 +787,7 @@ def parse_args() -> argparse.Namespace:
 	parser = argparse.ArgumentParser(description="Build guardrail evaluation dataset")
 	parser.add_argument("--output-dir", type=Path, default=Path("outputs"))
 	parser.add_argument("--cache-dir", type=Path, default=Path("cache"))
-	parser.add_argument("--target-size", type=int, default=1500)
+	parser.add_argument("--target-size", type=int, default=0, help="0 = use all records (no downsampling)")
 	parser.add_argument("--seed", type=int, default=42)
 	parser.add_argument("--train-ratio", type=float, default=0.7)
 	parser.add_argument("--val-ratio", type=float, default=0.15)
@@ -770,17 +814,22 @@ def main() -> None:
 	)
 	records.extend(extra_variants)
 
-	class_ratio = {
-		LABEL_BENIGN: 0.4,
-		LABEL_JAILBREAK: 0.3,
-		LABEL_HARMFUL: 0.3,
-	}
-	sampled = sample_to_target(
-		records=records,
-		target_size=args.target_size,
-		seed=args.seed,
-		class_ratio=class_ratio,
-	)
+	if args.target_size > 0:
+		class_ratio = {
+			LABEL_BENIGN: 0.4,
+			LABEL_JAILBREAK: 0.3,
+			LABEL_HARMFUL: 0.3,
+		}
+		sampled = sample_to_target(
+			records=records,
+			target_size=args.target_size,
+			seed=args.seed,
+			class_ratio=class_ratio,
+		)
+	else:
+		# No downsampling — use all records
+		sampled = list(records)
+		random.shuffle(sampled)
 
 	enforce_schema_and_labels(sampled)
 	assign_splits_grouped(
