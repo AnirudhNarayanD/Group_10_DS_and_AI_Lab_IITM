@@ -1,0 +1,68 @@
+\documentclass[11pt]{article}
+\usepackage[margin=0.75in]{geometry}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{titlesec}
+\usepackage{parskip}
+
+\titlespacing*{\section}{0pt}{8pt}{4pt}
+\titlespacing*{\subsection}{0pt}{6pt}{3pt}
+\pagestyle{empty}
+
+\begin{document}
+
+\begin{center}
+    {\Large \textbf{ECE 601: ML for Engineers --- Project Phase 1}} \\[6pt]
+    {\large Anirudh Narayan Devanathan}
+\end{center}
+
+\vspace{-4pt}
+\noindent\rule{\textwidth}{0.4pt}
+
+\section*{Project Description}
+
+The goal of this project is to build a \textbf{safety guardrail classifier} for Large Language Model (LLM) inference pipelines. As LLMs are increasingly deployed in user-facing applications, they are vulnerable to adversarial prompt attacks---such as jailbreaks and harmful content requests---that can cause the model to produce unsafe outputs. This project frames the defense problem as a \textbf{supervised multi-class text classification} task over three categories: \textit{benign} (safe queries), \textit{jailbreak} (prompt injection and circumvention attacks), and \textit{harmful} (requests for dangerous or illegal content).
+
+\subsection*{Input Data}
+
+The input data consists of natural-language user prompts sourced from publicly available Hugging Face datasets. Table~\ref{tab:datasets} summarizes the data sources organized by label category.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{@{}llp{7.5cm}@{}}
+\toprule
+\textbf{Label} & \textbf{Source} & \textbf{Description} \\
+\midrule
+Benign      & \texttt{rajpurkar/squad\_v2}                          & Reading comprehension questions \\
+            & \texttt{yahma/alpaca-cleaned}                         & Instruction-following prompts \\
+            & \texttt{TrustAIRLab/in-the-wild} (regular)            & Regular user queries \\
+\midrule
+Jailbreak   & \texttt{lmsys/toxic-chat}                             & Community-flagged jailbreak prompts \\
+            & \texttt{TrustAIRLab/in-the-wild} (jailbreak)          & Real-world jailbreak attempts \\
+            & \texttt{rubend18/ChatGPT-Jailbreak}                   & Curated jailbreak collection \\
+            & \texttt{JailbreakV-28K}                               & Large-scale jailbreak corpus \\
+\midrule
+Harmful     & \texttt{lmsys/toxic-chat}                             & Toxic content requests \\
+            & \texttt{JailbreakV-28K} (redteam)                     & Red-team adversarial queries \\
+\bottomrule
+\end{tabular}
+\caption{Datasets by category, all sourced from Hugging Face.}
+\label{tab:datasets}
+\end{table}
+
+\vspace{-6pt}
+\subsection*{Learning Target}
+
+The classifier learns to predict the \textbf{intent category} (benign / jailbreak / harmful) of each input prompt. The model is a fine-tuned DistilBERT encoder with a multi-layer classification head, trained with class-weighted cross-entropy loss and evaluated on macro-F1, per-class precision/recall, and attack success rate (ASR).
+
+\subsection*{Future Advancements}
+
+A key direction for extending this work is \textbf{inference-time alignment via reinforcement learning}. Rather than relying solely on a static classifier, RL-based alignment (e.g., RLHF or direct preference optimization) can be applied at inference time to dynamically steer the LLM's responses toward safe outputs. This would enable the guardrail system to adapt to novel attack patterns without retraining, using reward signals derived from safety policies to adjust generation in real time.
+
+\section*{AI Coding Assistant Prompt}
+
+\textit{``I want to build a machine learning system that acts as a safety guardrail for large language models. The system should classify user prompts into benign, jailbreak, or harmful categories to protect the LLM from adversarial attacks. Use publicly available prompt datasets from Hugging Face for training data. The classifier should be a fine-tuned transformer model with a custom classification head, and the evaluation should include safety-specific metrics like attack success rate alongside standard classification metrics.''}
+
+\end{document}
